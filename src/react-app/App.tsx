@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-const API = "https://dreamworld-auth-api.daviolvcass.workers.dev";
+const API = "";
 type Player = { playerId: string; username: string; coins: number };
 type ApiReply = { token?: string; player?: Player; announcement?: { message?: string }; error?: string };
 
@@ -18,7 +18,7 @@ function App() {
   });
 
   async function api<T extends ApiReply>(path: string, init: RequestInit = {}): Promise<T> {
-    const response = await fetch(API + path, {
+    const response = await fetch(API + path.replace(/^\//, "/api/"), {
       ...init,
       headers: {
         "Content-Type": "application/json",
@@ -34,7 +34,7 @@ function App() {
   async function loadAccount(activeToken = token) {
     if (!activeToken) return;
     try {
-      const response = await fetch(API + "/auth/me", { headers: { Authorization: "Bearer " + activeToken } });
+      const response = await fetch(API + "/api/auth/me", { headers: { Authorization: "Bearer " + activeToken } });
       const data = await response.json() as ApiReply;
       if (!response.ok || !data.player) {
         localStorage.removeItem("dreamworld_session");
@@ -43,7 +43,7 @@ function App() {
         return;
       }
       setPlayer(data.player);
-      const stateResponse = await fetch(API + "/player/state", { headers: { Authorization: "Bearer " + activeToken } });
+      const stateResponse = await fetch(API + "/api/player/state", { headers: { Authorization: "Bearer " + activeToken } });
       if (stateResponse.ok) {
         const state = await stateResponse.json() as ApiReply;
         setAnnouncement(state.announcement?.message || "");
@@ -80,6 +80,7 @@ function App() {
   }
 
   function signOut() {
+    void fetch(API + "/api/auth/logout", { method: "POST", headers: { Authorization: "Bearer " + token } }).catch(() => {});
     localStorage.removeItem("dreamworld_session");
     setToken("");
     setPlayer(null);
