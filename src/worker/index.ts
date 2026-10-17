@@ -37,7 +37,7 @@ async function playerPayload(db: D1Database, username: string) {
 app.get("/api/health", c => c.json({ ok: true, service: "Dream World API" }));
 app.post("/api/auth/register", async c => {
   await ensureTables(c.env.DB);
-  const body = await c.req.json<{ username?: string; password?: string }>().catch(() => ({}));
+  const body = await c.req.json<{ username?: string; password?: string }>().catch(() => ({} as { username?: string; password?: string }));
   const username = body.username?.trim() ?? "";
   const password = body.password ?? "";
   if (!/^[A-Za-z0-9_]{3,20}$/.test(username)) return jsonError("Username must be 3–20 letters, numbers, or underscores.", 400);
