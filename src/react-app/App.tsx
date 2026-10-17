@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./App.css";
 
-const API = "https://dreamworld-auth-api.daviolvcass.workers.dev";
+const API = "https://dreamworld-account-api.daviolvcass.workers.dev";
 type Player = { playerId: string; username: string; coins: number };
 type ApiReply = { token?: string; player?: Player; announcement?: { message?: string }; error?: string };
 
